@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Wi-Fi Guardian - Network Security Dashboard</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Outfit Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(30, 41, 59, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(15, 23, 42, 0.6) 0%, transparent 50%),
+                radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+            color: #cbd5e1;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* Banner Pulse & Glowing effects */
+        @keyframes pulse-glowing-red {
+            0% {
+                box-shadow: 0 0 8px rgba(239, 68, 68, 0.25), inset 0 0 5px rgba(239, 68, 68, 0.15);
+                border-color: rgba(239, 68, 68, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 22px rgba(239, 68, 68, 0.6), inset 0 0 12px rgba(239, 68, 68, 0.3);
+                border-color: rgba(239, 68, 68, 0.6);
+            }
+            100% {
+                box-shadow: 0 0 8px rgba(239, 68, 68, 0.25), inset 0 0 5px rgba(239, 68, 68, 0.15);
+                border-color: rgba(239, 68, 68, 0.3);
+            }
+        }
+        
+        .danger-banner {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            animation: pulse-glowing-red 2.5s infinite;
+        }
+
+        .secure-banner {
+            background: rgba(16, 185, 129, 0.07);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Stats Section styles */
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .text-emerald {
+            color: #10b981;
+            text-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .text-rose {
+            color: #f43f5e;
+            text-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+        }
+
+        .text-sky {
+            color: #38bdf8;
+            text-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Table Design */
+        .table-glass-container {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .table {
+            color: #cbd5e1;
+            margin-bottom: 0;
+        }
+
+        .table > :not(caption) > * > * {
+            background-color: transparent !important;
+            padding: 1.1rem 1.2rem;
+            border-bottom-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .table-dark-header {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .table-dark-header th {
+            color: #94a3b8 !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .table-hover tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            color: #f8fafc;
+        }
+
+        .badge-custom {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 0.4em 0.8em;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .input-trust {
+            background: rgba(15, 23, 42, 0.5) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #f8fafc !important;
+            transition: all 0.2s ease;
+        }
+
+        .input-trust:focus {
+            background: rgba(15, 23, 42, 0.8) !important;
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.25) !important;
+        }
+
+        /* Interactive Action Buttons */
+        .btn-custom-trust {
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.05);
+            color: #34d399;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom-trust:hover {
+            background: #10b981;
+            color: #0b0f19;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-custom-untrust {
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            background: rgba(244, 63, 94, 0.05);
+            color: #fb7185;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom-untrust:hover {
+            background: #f43f5e;
+            color: #0b0f19;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+        }
+
+        /* Fullscreen Radar Scanning Overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(7, 10, 19, 0.93);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+        }
+
+        .radar {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 2px solid rgba(56, 189, 248, 0.15);
+            position: relative;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.05);
+        }
+
+        .radar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 0deg, transparent 40%, rgba(56, 189, 248, 0.45) 100%);
+            border-radius: 50%;
+            animation: rotate-radar 1.8s linear infinite;
+        }
+
+        .radar-circle-inner {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 60%;
+            height: 60%;
+            border-radius: 50%;
+            border: 1px dashed rgba(56, 189, 248, 0.25);
+        }
+
+        @keyframes rotate-radar {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .radar-blip {
+            position: absolute;
+            top: 35%;
+            left: 65%;
+            width: 8px;
+            height: 8px;
+            background: #38bdf8;
+            border-radius: 50%;
+            box-shadow: 0 0 15px 4px #38bdf8;
+            animation: blink-blip 1.5s infinite;
+        }
+
+        @keyframes blink-blip {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .scan-text {
+            color: #38bdf8;
+            font-size: 1.25rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Overlay Loader -->
+    <div id="loadingOverlay">
+        <div class="radar">
+            <div class="radar-circle-inner"></div>
+            <div class="radar-blip"></div>
+        </div>
+        <div class="scan-text animate-pulse">Scanning Network Subnet...</div>
+        <div class="text-muted small mt-2">Waking up client devices via UDP ping sweeps</div>
+    </div>
+
+    <div class="container my-5">
+        
+        <!-- Header Banner Section -->
+        <div class="d-flex align-items-center mb-4 pb-2 border-bottom border-secondary border-opacity-10 justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <span style="font-size: 2.2rem;">🛡️</span>
+                <div>
+                    <h1 class="h2 fw-bold mb-0 text-white" style="letter-spacing: -0.02em;">Wi-Fi Guardian</h1>
+                    <p class="text-muted small mb-0">Local Area Network Intrusion Prevention System</p>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small">Last scan: <strong class="text-light">{{ last_scan_time_str }}</strong></span>
+                <button onclick="triggerScan()" class="btn btn-primary px-4 py-2 shadow-sm rounded-pill d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none;">
+                    <span>🔄</span> Refresh Scan
+                </button>
+            </div>
+        </div>
+
+        <!-- Security Alarm Alert Area -->
+        {% if intruder_detected %}
+        <div class="alert danger-banner text-center shadow-lg p-4 rounded-4 mb-4" role="alert">
+            <h3 class="fw-extrabold text-white mb-2" style="letter-spacing: 0.02em;">⚠️ INTRUDER WARNING</h3>
+            <p class="fs-6 mb-0 text-light opacity-90">An unrecognized client device has been detected connected to your wireless infrastructure. Inspect details below immediately.</p>
+        </div>
+        {% else %}
+        <div class="alert secure-banner text-center shadow-lg p-4 rounded-4 mb-4" role="alert">
+            <h3 class="fw-extrabold text-white mb-2" style="letter-spacing: 0.02em;">🛡️ SUBNET SECURED</h3>
+            <p class="fs-6 mb-0 text-light opacity-90">No anomalous activity detected. All active endpoints are authenticated in your local client profile.</p>
+        </div>
+        {% endif %}
+
+        <!-- Stats Grid Layout -->
+        <div class="row g-4 mb-5">
+            <!-- Col 1 -->
+            <div class="col-md-3">
+                <div class="glass-card p-4 h-100">
+                    <div class="stat-label mb-2">Network Segment</div>
+                    <div class="stat-value text-sky mb-2" style="font-size: 1.6rem;">{{ subnet_range }}</div>
+                    <div class="text-muted small">Gateway client: <span class="text-light">{{ local_ip }}</span></div>
+                </div>
+            </div>
+            <!-- Col 2 -->
+            <div class="col-md-3">
+                <div class="glass-card p-4 h-100">
+                    <div class="stat-label mb-2">Connected Devices</div>
+                    <div class="stat-value text-light mb-1">{{ total_devices }}</div>
+                    <div class="text-muted small">Live hosts responding to requests</div>
+                </div>
+            </div>
+            <!-- Col 3 -->
+            <div class="col-md-3">
+                <div class="glass-card p-4 h-100">
+                    <div class="stat-label mb-2">Trusted Devices</div>
+                    <div class="stat-value text-emerald mb-1">{{ trusted_count }}</div>
+                    <div class="text-muted small">Registered in database cache</div>
+                </div>
+            </div>
+            <!-- Col 4 -->
+            <div class="col-md-3">
+                <div class="glass-card p-4 h-100">
+                    <div class="stat-label mb-2">Unrecognized Devices</div>
+                    <div class="stat-value {% if unknown_count > 0 %}text-rose{% else %}text-muted{% endif %} mb-1">
+                        {{ unknown_count }}
+                    </div>
+                    <div class="text-muted small">Devices requiring authorization</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Devices Inventory Table -->
+        <h3 class="h5 text-white mb-3" style="letter-spacing: 0.03em;">Active Network Inventory Table</h3>
+        <div class="glass-card shadow-lg p-0 table-glass-container mb-5">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark-header">
+                        <tr>
+                            <th>Verification Status</th>
+                            <th>IP Address</th>
+                            <th>MAC Address (Physical)</th>
+                            <th>Assigned Identity Label</th>
+                            <th class="text-end" style="width: 320px;">Access Controls</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if not devices %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-5">
+                                <span style="font-size: 2rem;">📭</span>
+                                <p class="mb-0 mt-2">No active client terminals detected in current scan frame.</p>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% for device in devices %}
+                        <tr>
+                            <td>
+                                {% if device.is_trusted %}
+                                <span class="badge badge-custom bg-success bg-opacity-25 text-emerald border border-success border-opacity-20">Trusted</span>
+                                {% else %}
+                                <span class="badge badge-custom bg-danger bg-opacity-25 text-rose border border-danger border-opacity-20 animate-pulse">Intruder</span>
+                                {% endif %}
+                            </td>
+                            <td class="font-monospace fw-bold text-white">{{ device.ip }}</td>
+                            <td class="font-monospace text-muted">{{ device.mac }}</td>
+                            <td>
+                                {% if device.is_trusted %}
+                                <span class="text-light fw-medium">{{ device.name }}</span>
+                                {% else %}
+                                <em class="text-muted text-opacity-50 small">Pending Identity Profile Registration</em>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if not device.is_trusted %}
+                                <form action="/trust" method="POST" class="d-inline-flex gap-2">
+                                    <input type="hidden" name="mac" value="{{ device.mac }}">
+                                    <input type="text" name="name" class="form-control form-control-sm input-trust"
+                                        placeholder="e.g., Family Laptop" required>
+                                    <button type="submit" class="btn btn-sm btn-custom-trust px-3 rounded-pill text-nowrap">Trust Device</button>
+                                </form>
+                                {% else %}
+                                <form action="/untrust" method="POST" class="d-inline">
+                                    <input type="hidden" name="mac" value="{{ device.mac }}">
+                                    <button type="submit" class="btn btn-sm btn-custom-untrust px-3 rounded-pill">Untrust Device</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script to trigger scanning loader overlay -->
+    <script>
+        function triggerScan() {
+            // Show the radar loading overlay
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            // Wait 100ms before navigating to let browser render the overlay DOM
+            setTimeout(function() {
+                window.location.href = '/?refresh=true';
+            }, 100);
+        }
+    </script>
+</body>
+
+</html>
