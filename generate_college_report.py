@@ -72,13 +72,8 @@ class NumberedCanvas(canvas.Canvas):
             
         self.saveState()
         
-        # Left Margin Accent Line on Chapter Pages (Page 8 onwards)
+        # Header on Chapter Pages (Page 8 onwards)
         if self._pageNumber >= 8:
-            self.setStrokeColor(colors.HexColor('#3b82f6'))
-            self.setLineWidth(1)
-            self.line(40, 734, 40, 48)
-            
-            # Header
             self.setFont("Helvetica-Bold", 8)
             self.setFillColor(colors.HexColor('#1e293b'))
             self.drawString(54, 742, "Wi-Fi Guardian — Network Security & Intrusion Prevention System")
