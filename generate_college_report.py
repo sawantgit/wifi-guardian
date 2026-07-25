@@ -72,8 +72,8 @@ class NumberedCanvas(canvas.Canvas):
             
         self.saveState()
         
-        # Header on Chapter Pages (Page 8 onwards)
-        if self._pageNumber >= 8:
+        # Running Header on Content Pages (Page 5 onwards)
+        if self._pageNumber >= 5:
             self.setFont("Helvetica-Bold", 8)
             self.setFillColor(colors.HexColor('#1e293b'))
             self.drawString(54, 742, "Wi-Fi Guardian — Network Security & Intrusion Prevention System")
@@ -89,7 +89,7 @@ class NumberedCanvas(canvas.Canvas):
         
         self.setFont("Helvetica", 8.5)
         self.setFillColor(colors.HexColor('#64748b'))
-
+        
         page_text = f"Page {self._pageNumber}"
         self.drawRightString(558, 34, page_text)
         
@@ -188,11 +188,12 @@ def generate_report():
     scanning_screenshot = get_screenshot_path("dashboard_scanning")
     final_screenshot = get_screenshot_path("dashboard_final")
     
+    # Target 15-16 pages, minimizing white space by setting natural pagination margins
     doc = SimpleDocTemplate(
         pdf_filename,
         pagesize=letter,
         leftMargin=54, rightMargin=54,
-        topMargin=72, bottomMargin=72
+        topMargin=54, bottomMargin=54
     )
     
     styles = getSampleStyleSheet()
@@ -245,8 +246,8 @@ def generate_report():
         fontSize=11,
         leading=15,
         textColor=colors.HexColor('#000000'),
-        spaceBefore=16,
-        spaceAfter=10,
+        spaceBefore=12,
+        spaceAfter=8,
         keepWithNext=True
     )
     
@@ -256,7 +257,7 @@ def generate_report():
         fontSize=10,
         leading=14.5,
         textColor=colors.HexColor('#334155'),
-        spaceAfter=10
+        spaceAfter=8
     )
     
     bullet_style = ParagraphStyle(
@@ -264,7 +265,7 @@ def generate_report():
         parent=body_style,
         leftIndent=20,
         firstLineIndent=-10,
-        spaceAfter=6
+        spaceAfter=4
     )
     
     code_style = ParagraphStyle(
@@ -278,7 +279,7 @@ def generate_report():
         borderColor=colors.HexColor('#cbd5e1'),
         borderWidth=0.5,
         borderPadding=6,
-        spaceAfter=12
+        spaceAfter=10
     )
 
     story = []
@@ -307,13 +308,12 @@ def generate_report():
     story.append(Paragraph("VELLORE INSTITUTE OF TECHNOLOGY, CHENNAI", cover_univ_style))
     story.append(PageBreak())
     
-    # ------------------ PAGE 2: CERTIFICATE ------------------
-    story.append(Spacer(1, 30))
+    # ------------------ PAGE 2: CERTIFICATES (MERGED) ------------------
+    story.append(Spacer(1, 10))
     story.append(get_asd_logo_drawing())
-    story.append(Spacer(1, 20))
+    story.append(Spacer(1, 10))
     
     story.append(Paragraph("<u><b>Certificate from the Mentor</b></u>", heading_style))
-    story.append(Spacer(1, 10))
     story.append(Paragraph(
         "This is to certify that <b>SAWANT</b> has completed the project Wi-Fi Guardian, "
         "Network Intrusion Detection App under my supervision during the period from <b>17.06.2026</b> "
@@ -322,32 +322,21 @@ def generate_report():
         "of Technology, Chennai</b>.",
         body_style
     ))
-    story.append(Spacer(1, 60))
+    story.append(Spacer(1, 15))
     
     sig_data = [
+        [Spacer(1, 5), get_signature_drawing()],
         [
-            Spacer(1, 10),
-            get_signature_drawing()
-        ],
-        [
-            Paragraph("<b>Date: 09.07.2026</b>", ParagraphStyle('D', fontName='Helvetica-Bold', fontSize=9.5)),
-            Paragraph("<u>____________________</u><br/><b>Signature of the Mentor</b>", ParagraphStyle('S', fontName='Helvetica', fontSize=9.5, leading=14, alignment=2))
+            Paragraph("<b>Date: 09.07.2026</b>", ParagraphStyle('D', fontName='Helvetica-Bold', fontSize=9)),
+            Paragraph("<u>____________________</u><br/><b>Signature of the Mentor</b>", ParagraphStyle('S', fontName='Helvetica', fontSize=9, leading=12, alignment=2))
         ]
     ]
     sig_table = Table(sig_data, colWidths=[3.2*inch, 3.2*inch])
-    sig_table.setStyle(TableStyle([
-        ('VALIGN', (0,0), (-1,-1), 'BOTTOM'),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 0),
-    ]))
+    sig_table.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'BOTTOM'), ('BOTTOMPADDING', (0,0), (-1,-1), 0)]))
     story.append(sig_table)
-    story.append(PageBreak())
-
-    # ------------------ PAGE 3: CERTIFICATE of COURSE COMPLETION ------------------
-    story.append(Spacer(1, 30))
-    story.append(get_vit_logo_drawing())
-    story.append(Spacer(1, 25))
+    
+    story.append(Spacer(1, 20))
     story.append(Paragraph("<u><b>Certificate of Institutional Training</b></u>", heading_style))
-    story.append(Spacer(1, 10))
     story.append(Paragraph(
         "This is to certify that the project work entitled <i>\"Wi-Fi Guardian: An Automated LAN Intrusion "
         "Detection and Prevention System\"</i> is a record of training carried out by <b>SAWANT</b> "
@@ -356,28 +345,19 @@ def generate_report():
         "system optimizations, and performance evaluation protocols.",
         body_style
     ))
-    story.append(Spacer(1, 30))
-    story.append(Paragraph(
-        "The project has been reviewed by the internal examination board and is approved for final year B.Tech "
-        "dissertation fulfillment.",
-        body_style
-    ))
-    story.append(Spacer(1, 80))
-
+    story.append(Spacer(1, 15))
     committee_data = [
         [
-            Paragraph("<u>____________________</u><br/><b>Internal Examiner</b>", ParagraphStyle('I', fontName='Helvetica', fontSize=9.5, leading=14)),
-            Paragraph("<u>____________________</u><br/><b>External Examiner</b>", ParagraphStyle('E', fontName='Helvetica', fontSize=9.5, leading=14, alignment=2))
+            Paragraph("<u>____________________</u><br/><b>Internal Examiner</b>", ParagraphStyle('I', fontName='Helvetica', fontSize=9, leading=12)),
+            Paragraph("<u>____________________</u><br/><b>External Examiner</b>", ParagraphStyle('E', fontName='Helvetica', fontSize=9, leading=12, alignment=2))
         ]
     ]
     committee_table = Table(committee_data, colWidths=[3.2*inch, 3.2*inch])
     story.append(committee_table)
     story.append(PageBreak())
     
-    # ------------------ PAGE 4: ACKNOWLEDGMENT ------------------
-    story.append(Spacer(1, 20))
+    # ------------------ PAGE 3: ACKNOWLEDGMENT & ABSTRACT (MERGED) ------------------
     story.append(Paragraph("<u><b>Acknowledgment</b></u>", heading_style))
-    story.append(Spacer(1, 10))
     story.append(Paragraph(
         "I take this opportunity to express my deep gratitude and sincerest thanks to my "
         "project mentor, <b>Swagatam Biswas</b>, for giving the most valuable suggestions, "
@@ -390,71 +370,8 @@ def generate_report():
         "their support.",
         body_style
     ))
-    story.append(PageBreak())
-
-    # ------------------ PAGE 5: TABLE OF CONTENTS ------------------
-    story.append(Spacer(1, 10))
-    story.append(Paragraph("<u><b>TABLE OF CONTENTS</b></u>", heading_style))
-    story.append(Spacer(1, 10))
     
-    toc_data = [
-        make_toc_row("1.", "ABSTRACT", "7"),
-        make_toc_row("2.", "INTRODUCTION", "8"),
-        make_toc_row("3.", "PROBLEM STATEMENT", "9"),
-        make_toc_row("4.", "OBJECTIVES", "9"),
-        make_toc_row("5.", "TECHNOLOGY STACK", "10"),
-        make_toc_row("6.", "SYSTEM ARCHITECTURE", "11"),
-        make_toc_row("7.", "SYSTEM FLOWCHART DIAGRAM", "12"),
-        make_toc_row("8.", "PROJECT MODULES", "13"),
-        make_toc_row("9.", "DASHBOARD OVERVIEW", "14"),
-        make_toc_row("10.", "IMPLEMENTATION", "16"),
-        make_toc_row("11.", "FEATURES", "17"),
-        make_toc_row("12.", "RESULTS & DISCUSSION", "18"),
-        make_toc_row("13.", "ADVANTAGES & LIMITATIONS", "19"),
-        make_toc_row("14.", "FUTURE ENHANCEMENTS", "20"),
-        make_toc_row("15.", "CONCLUSION", "20"),
-        make_toc_row("16.", "REFERENCES", "21")
-    ]
-    
-    toc_table = Table(toc_data, colWidths=[5.4*inch, 1.0*inch])
-    toc_table.setStyle(TableStyle([
-        ('VALIGN', (0,0), (-1,-1), 'BOTTOM'),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
-        ('TOPPADDING', (0,0), (-1,-1), 4),
-    ]))
-    story.append(toc_table)
-    story.append(PageBreak())
-
-    # ------------------ PAGE 6: LIST OF FIGURES & TABLES ------------------
-    story.append(Spacer(1, 10))
-    story.append(Paragraph("<u><b>LIST OF FIGURES</b></u>", heading_style))
-    story.append(Spacer(1, 8))
-    
-    lof_data = [
-        make_toc_row("Figure 4.1", "Decoupled Data Flow Block Diagram", "11"),
-        make_toc_row("Figure 4.2", "System Architecture Flowchart", "12"),
-        make_toc_row("Figure 6.1", "Dashboard UI Initial View Screenshot", "14"),
-        make_toc_row("Figure 6.2", "Radar Scanning Overlay Screenshot", "15")
-    ]
-    lof_table = Table(lof_data, colWidths=[5.4*inch, 1.0*inch])
-    lof_table.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'BOTTOM'), ('BOTTOMPADDING', (0,0), (-1,-1), 4)]))
-    story.append(lof_table)
-    
-    story.append(Spacer(1, 30))
-    story.append(Paragraph("<u><b>LIST OF TABLES</b></u>", heading_style))
-    story.append(Spacer(1, 8))
-    
-    lot_data = [
-        make_toc_row("Table 3.1", "Hardware and Software Specifications", "10"),
-        make_toc_row("Table 5.1", "Technology Stack Components", "10"),
-        make_toc_row("Table 7.1", "Subnet Scan Latency Benchmarks", "18")
-    ]
-    lot_table = Table(lot_data, colWidths=[5.4*inch, 1.0*inch])
-    lot_table.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'BOTTOM'), ('BOTTOMPADDING', (0,0), (-1,-1), 4)]))
-    story.append(lot_table)
-    story.append(PageBreak())
-    
-    # ------------------ PAGE 7: ABSTRACT ------------------
+    story.append(Spacer(1, 15))
     story.append(Paragraph("<u><b>ABSTRACT</b></u>", heading_style))
     story.append(Paragraph(
         "Wi-Fi Guardian is a fast, automated local network monitoring and intrusion detection system. "
@@ -469,12 +386,57 @@ def generate_report():
         "and latency optimization, and is intended strictly for home network audit and authorization purposes.",
         body_style
     ))
-    
-    story.append(Spacer(1, 20))
-    story.append(Paragraph("<b>Keywords:</b> Network Security, Host Discovery, ARP Resolution, UDP Port Sweep, Caching Layer, Flask Web Dashboard, SQLite datastores.", ParagraphStyle('K', fontName='Helvetica-BoldOblique', fontSize=9.5, leading=14)))
+    story.append(Spacer(1, 5))
+    story.append(Paragraph("<b>Keywords:</b> Network Security, Host Discovery, ARP Resolution, UDP Port Sweep, Caching Layer, Flask Web Dashboard, SQLite datastores.", ParagraphStyle('K', fontName='Helvetica-BoldOblique', fontSize=9, leading=13)))
     story.append(PageBreak())
 
-    # ------------------ PAGE 8: CHAPTER 1: INTRODUCTION ------------------
+    # ------------------ PAGE 4: TABLE OF CONTENTS & FIGURES/TABLES (MERGED) ------------------
+    story.append(Paragraph("<u><b>TABLE OF CONTENTS</b></u>", heading_style))
+    toc_data = [
+        make_toc_row("1.", "ABSTRACT & ACKNOWLEDGMENT", "3"),
+        make_toc_row("2.", "INTRODUCTION", "5"),
+        make_toc_row("3.", "PROBLEM STATEMENT", "6"),
+        make_toc_row("4.", "OBJECTIVES & TECHNOLOGY STACK", "6"),
+        make_toc_row("5.", "SYSTEM ARCHITECTURE", "7"),
+        make_toc_row("6.", "SYSTEM FLOWCHART DIAGRAM", "9"),
+        make_toc_row("7.", "PROJECT MODULES", "10"),
+        make_toc_row("8.", "DASHBOARD OVERVIEW & PREVIEWS", "11"),
+        make_toc_row("9.", "IMPLEMENTATION DETAILS", "13"),
+        make_toc_row("10.", "FEATURES & ANALYSIS", "13"),
+        make_toc_row("11.", "RESULTS & DISCUSSION", "14"),
+        make_toc_row("12.", "ADVANTAGES & LIMITATIONS", "15"),
+        make_toc_row("13.", "FUTURE ENHANCEMENTS", "16"),
+        make_toc_row("14.", "CONCLUSION & REFERENCES", "16")
+    ]
+    toc_table = Table(toc_data, colWidths=[5.4*inch, 1.0*inch])
+    toc_table.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'BOTTOM'), ('BOTTOMPADDING', (0,0), (-1,-1), 2), ('TOPPADDING', (0,0), (-1,-1), 2)]))
+    story.append(toc_table)
+    
+    story.append(Spacer(1, 15))
+    story.append(Paragraph("<u><b>LIST OF FIGURES</b></u>", heading_style))
+    lof_data = [
+        make_toc_row("Figure 4.1", "Decoupled Data Flow Block Diagram", "7"),
+        make_toc_row("Figure 4.2", "System Architecture Flowchart", "9"),
+        make_toc_row("Figure 6.1", "Dashboard UI Initial View Screenshot", "11"),
+        make_toc_row("Figure 6.2", "Radar Scanning Overlay Screenshot", "12")
+    ]
+    lof_table = Table(lof_data, colWidths=[5.4*inch, 1.0*inch])
+    lof_table.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'BOTTOM'), ('BOTTOMPADDING', (0,0), (-1,-1), 2)]))
+    story.append(lof_table)
+    
+    story.append(Spacer(1, 15))
+    story.append(Paragraph("<u><b>LIST OF TABLES</b></u>", heading_style))
+    lot_data = [
+        make_toc_row("Table 3.1", "Hardware and Software Specifications", "6"),
+        make_toc_row("Table 5.1", "Technology Stack Components", "6"),
+        make_toc_row("Table 7.1", "Subnet Scan Latency Benchmarks", "14")
+    ]
+    lot_table = Table(lot_data, colWidths=[5.4*inch, 1.0*inch])
+    lot_table.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'BOTTOM'), ('BOTTOMPADDING', (0,0), (-1,-1), 2)]))
+    story.append(lot_table)
+    story.append(PageBreak())
+    
+    # ------------------ PAGE 5: CHAPTER 1: INTRODUCTION ------------------
     story.append(Paragraph("<u><b>INTRODUCTION</b></u>", heading_style))
     story.append(Paragraph(
         "Modern web and smart-home applications rely heavily on verified endpoints to enforce subnet security. "
@@ -509,7 +471,7 @@ def generate_report():
     ))
     story.append(PageBreak())
 
-    # ------------------ PAGE 9: CHAPTER 1 (CONTD) ------------------
+    # ------------------ PAGE 6: REQUIREMENT ANALYSIS & OBJECTIVES (MERGED) ------------------
     story.append(Paragraph("1.3 Scope of Project", heading_style))
     story.append(Paragraph(
         "The scope of Wi-Fi Guardian covers automated local subnet discovery for Class C networks (e.g. `/24` subnets). "
@@ -532,9 +494,8 @@ def generate_report():
     story.append(Paragraph("• Storing and validating device MAC addresses in a local registry", bullet_style))
     story.append(Paragraph("• Caching scan results to prevent redundant network flooding", bullet_style))
     story.append(Paragraph("• Displaying visual alert alarms for anomalous/untrusted devices", bullet_style))
-    story.append(Paragraph("• Exporting security configurations and logs as PDF reports", bullet_style))
     
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 5))
     story.append(Paragraph("<u><b>OBJECTIVES</b></u>", heading_style))
     story.append(Paragraph("The primary objectives of Wi-Fi Guardian are:", body_style))
     story.append(Paragraph("• Detect local subnet prefix and range automatically", bullet_style))
@@ -543,10 +504,8 @@ def generate_report():
     story.append(Paragraph("• Parse the OS ARP cache to discover active MAC addresses", bullet_style))
     story.append(PageBreak())
 
-    # ------------------ PAGE 10: CHAPTER 2: TECHNOLOGY STACK ------------------
+    # ------------------ PAGE 7: TECH STACK & ARCHITECTURE (MERGED) ------------------
     story.append(Paragraph("<u><b>TECHNOLOGY STACK</b></u>", heading_style))
-    
-    # Render Tech Stack Table
     t_tech = Table(tech_data, colWidths=[2.2*inch, 4.2*inch])
     t_tech.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#000000')),
@@ -554,32 +513,17 @@ def generate_report():
         ('ALIGN', (0,0), (-1,-1), 'LEFT'),
         ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
         ('FONTSIZE', (0,0), (-1,0), 9),
-        ('BOTTOMPADDING', (0,0), (-1,0), 4),
+        ('BOTTOMPADDING', (0,0), (-1,0), 3),
         ('BACKGROUND', (0,1), (-1,-1), colors.HexColor('#f8fafc')),
         ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#cbd5e1')),
         ('FONTNAME', (0,1), (-1,-1), 'Helvetica'),
         ('FONTSIZE', (0,1), (-1,-1), 8.5),
-        ('PADDING', (0,0), (-1,-1), 4),
+        ('PADDING', (0,0), (-1,-1), 3),
     ]))
     story.append(t_tech)
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 10))
 
     story.append(Paragraph("3.1 Requirements Analysis", heading_style))
-    story.append(Paragraph(
-        "To ensure the Wi-Fi Guardian compiles and runs cleanly, the following software and hardware requirements "
-        "were analyzed:",
-        body_style
-    ))
-    
-    # Requirement Table
-    req_data = [
-        ['Parameter', 'Minimum Requirement', 'Recommended Specification'],
-        ['Processor', 'Dual-core 2.0 GHz CPU', 'Intel i5 or AMD Ryzen 5 CPU'],
-        ['RAM Capacity', '2 GB RAM', '4 GB or above'],
-        ['Storage', '50 MB free space', '100 MB free space (for DB growth)'],
-        ['OS Platform', 'Windows 10 / Linux', 'Windows 10/11 or Ubuntu 20.04+'],
-        ['Python Env', 'Python 3.10', 'Python 3.12 or above'],
-    ]
     t_req = Table(req_data, colWidths=[1.8*inch, 2.2*inch, 2.4*inch])
     t_req.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1e3a8a')),
@@ -588,12 +532,12 @@ def generate_report():
         ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#cbd5e1')),
         ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
         ('FONTSIZE', (0,0), (-1,-1), 8.5),
-        ('PADDING', (0,0), (-1,-1), 4),
+        ('PADDING', (0,0), (-1,-1), 3),
     ]))
     story.append(t_req)
     story.append(PageBreak())
 
-    # ------------------ PAGE 11: CHAPTER 3: SYSTEM ARCHITECTURE ------------------
+    # ------------------ PAGE 8: CHAPTER 3: SYSTEM ARCHITECTURE ------------------
     story.append(Paragraph("<u><b>SYSTEM ARCHITECTURE</b></u>", heading_style))
     story.append(Paragraph(
         "Wi-Fi Guardian follows a modular, decoupled architecture where the Flask application handles "
@@ -606,13 +550,13 @@ def generate_report():
     story.append(Paragraph("• <b>SQLite Datastore</b> — tracks registered trusted device names.", bullet_style))
     story.append(Paragraph("• <b>Report Generator</b> — compiles security reports into PDF downloads.", bullet_style))
     
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 5))
     story.append(create_callout_box(
         "Decoupling the frontend from the network socket queries is critical. By doing so, the Flask server "
         "can read cached local network configurations and render the UI instantly, even if the background scan is in flight.",
         "ARCHITECTURAL CRITERION"
     ))
-    story.append(Spacer(1, 20))
+    story.append(Spacer(1, 10))
     
     story.append(Paragraph("4.1 System Diagram Overview", heading_style))
     story.append(Paragraph(
@@ -622,12 +566,12 @@ def generate_report():
     ))
     story.append(PageBreak())
 
-    # ------------------ PAGE 12: SYSTEM ARCHITECTURE DIAGRAM ------------------
+    # ------------------ PAGE 9: SYSTEM ARCHITECTURE DIAGRAM ------------------
     story.append(Paragraph("<u><b>SYSTEM ARCHITECTURE FLOWCHART</b></u>", heading_style))
     story.append(get_system_architecture_drawing())
     story.append(PageBreak())
 
-    # ------------------ PAGE 13: PROJECT MODULES ------------------
+    # ------------------ PAGE 10: PROJECT MODULES ------------------
     story.append(Paragraph("<u><b>PROJECT MODULES</b></u>", heading_style))
     story.append(Paragraph("The software project contains 4 primary modules:", body_style))
     
@@ -660,11 +604,15 @@ def generate_report():
     ))
     story.append(PageBreak())
 
-    # ------------------ PAGE 14: DASHBOARD OVERVIEW ------------------
+    # ------------------ PAGE 11: DASHBOARD OVERVIEW ------------------
     story.append(Paragraph("<u><b>DASHBOARD OVERVIEW</b></u>", heading_style))
     story.append(Paragraph(
-        "The web interface displays security telemetry on a dark-mode theme. It includes statistic card summary grids "
-        "and active host tables.",
+        "The Flask interface is organized into a clean, modern security console designed for desktop web clients.",
+        body_style
+    ))
+    story.append(Paragraph(
+        "<b>Executive Summary & Metrics Cards</b>: Displays current status (Secured vs. Intruder alert), "
+        "active subnet, total live hosts, and unregistered threat counts.",
         body_style
     ))
     
@@ -676,7 +624,6 @@ def generate_report():
         except Exception:
             pass
     else:
-        # Drawing placeholder if screenshots missing
         d_sub = Drawing(460, 180)
         d_sub.add(Rect(0, 0, 460, 180, fillColor=colors.HexColor('#1e293b'), strokeColor=colors.HexColor('#cbd5e1')))
         d_sub.add(String(230, 90, "[Initial Dashboard Screenshot Placeholder]", textAnchor="middle", fontSize=10, fillColor=colors.white))
@@ -685,7 +632,7 @@ def generate_report():
         
     story.append(PageBreak())
 
-    # ------------------ PAGE 15: DASHBOARD SCANNING OVERLAY ------------------
+    # ------------------ PAGE 12: DASHBOARD SCANNING OVERLAY ------------------
     story.append(Paragraph("<b>Scanning Progress Radar Screen</b>:", heading_style))
     story.append(Paragraph(
         "When the refresh command is triggered, JavaScript masks the dashboard and displays a rotating radar scan visual overlay, "
@@ -708,7 +655,7 @@ def generate_report():
         
     story.append(PageBreak())
 
-    # ------------------ PAGE 16: IMPLEMENTATION ------------------
+    # ------------------ PAGE 13: IMPLEMENTATION (CODE & FEATURES) ------------------
     story.append(Paragraph("<u><b>IMPLEMENTATION</b></u>", heading_style))
     story.append(Paragraph(
         "The backend scanner uses a non-blocking single-socket loop to sweep target IP hosts, followed by command "
@@ -724,33 +671,17 @@ def generate_report():
         "and update the system ARP table before reading the command output.",
         "LATENCY TUNING"
     ))
-    story.append(PageBreak())
-
-    # ------------------ PAGE 17: FEATURES ------------------
-    story.append(Paragraph("<u><b>FEATURES</b></u>", heading_style))
-    story.append(Paragraph("The Wi-Fi Guardian includes several key design features:", body_style))
-    story.append(Paragraph("• **Automatic IP Detection**: Resolves active gateway prefixes automatically.", bullet_style))
-    story.append(Paragraph("• **Dual-Mode Packet Scanner**: Scapy packet broadcasts fallback to socket sweeps automatically.", bullet_style))
-    story.append(Paragraph("• **Non-Blocking UDP Sweep**: Sweeps 254 subnet hosts in under 5ms.", bullet_style))
-    story.append(Paragraph("• **Thread-Locked Cache**: Protects hardware calls from concurrent web loops.", bullet_style))
-    story.append(Paragraph("• **SQLite Persistence**: Stored MAC address registries remain saved on server reload.", bullet_style))
-    story.append(Paragraph("• **Glassmorphism UI**: Beautiful dark-mode dashboard with animated visual overlays.", bullet_style))
-    story.append(Paragraph("• **Intruder Alerts**: Flashes glowing red warnings for anomalous clients.", bullet_style))
-    story.append(Paragraph("• **PDF Audit Reports**: Compiles vector diagrams and tables into local PDF files.", bullet_style))
-    
     story.append(Spacer(1, 10))
-    story.append(Paragraph("5.1 Module Descriptions", heading_style))
-    story.append(Paragraph(
-        "The project is structured into modular scripts:<br/>"
-        "1. `app.py`: Standard Flask application mapping web routes and database calls.<br/>"
-        "2. `scanner.py`: Custom scanning triggers and command-line execution interfaces.<br/>"
-        "3. `database.py`: SQLite datastore mapping MAC credentials.<br/>"
-        "4. `templates/dashboard.html`: Glassmorphic styling templates.",
-        body_style
-    ))
+    story.append(Paragraph("<u><b>FEATURES</b></u>", heading_style))
+    story.append(Paragraph("• Automatic subnet IP detection", bullet_style))
+    story.append(Paragraph("• Dual-mode fallback scanning avoiding raw socket dependencies", bullet_style))
+    story.append(Paragraph("• Fast, multi-thread protected local dictionary cache (15s delay)", bullet_style))
+    story.append(Paragraph("• SQLite credential validation datastores", bullet_style))
+    story.append(Paragraph("• Dynamic, dark-themed responsive administration UI", bullet_style))
+    story.append(Paragraph("• Flashing warning badges for unidentified hardware addresses", bullet_style))
     story.append(PageBreak())
 
-    # ------------------ PAGE 18: RESULTS & DISCUSSION ------------------
+    # ------------------ PAGE 14: RESULTS & DISCUSSION ------------------
     story.append(Paragraph("<u><b>RESULTS & DISCUSSION</b></u>", heading_style))
     story.append(Paragraph(
         "Testing was performed on a local Wi-Fi subnet `10.79.33.0/24` with the host machine running Windows 11. "
@@ -759,13 +690,7 @@ def generate_report():
     ))
     
     story.append(Paragraph("6.1 Performance Benchmarks", heading_style))
-    story.append(Paragraph(
-        "The optimized single-socket UDP sweep scanner was compared against the old multi-threaded thread pool model "
-        "to measure scanning execution time and system resources:",
-        body_style
-    ))
     
-    # Results Table
     rt_col = Table(res_data, colWidths=[2.2*inch, 2.1*inch, 2.3*inch])
     rt_col.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1e3a8a')),
@@ -781,7 +706,7 @@ def generate_report():
         ('PADDING', (0,0), (-1,-1), 4),
     ]))
     story.append(rt_col)
-    story.append(Spacer(1, 15))
+    story.append(Spacer(1, 10))
     
     story.append(Paragraph("6.2 Latency Caching Benefits", heading_style))
     story.append(Paragraph(
@@ -793,7 +718,7 @@ def generate_report():
     ))
     story.append(PageBreak())
 
-    # ------------------ PAGE 19: ADVANTAGES & LIMITATIONS ------------------
+    # ------------------ PAGE 15: ADVANTAGES & LIMITATIONS ------------------
     story.append(Paragraph("<u><b>ADVANTAGES</b></u>", heading_style))
     story.append(Paragraph("• **User-friendly web console**: No complex command-line syntax", bullet_style))
     story.append(Paragraph("• **Zero extra drivers**: Works out-of-the-box on standard Windows builds", bullet_style))
@@ -810,14 +735,14 @@ def generate_report():
     story.append(Paragraph("• **Local Subnet Scope**: Limited to local routers, cannot analyze external remote networks.", bullet_style))
     story.append(PageBreak())
 
-    # ------------------ PAGE 20: FUTURE ENHANCEMENTS & CONCLUSION ------------------
+    # ------------------ PAGE 16: FUTURE ENHANCEMENTS, CONCLUSION & REFERENCES (CONTD) ------------------
     story.append(Paragraph("<u><b>FUTURE ENHANCEMENTS</b></u>", heading_style))
     story.append(Paragraph("Several future enhancements can extend the project scope:", body_style))
     story.append(Paragraph("• **DHCP Handshake Analysis**: Fingerprint OS distributions using DHCP headers.", bullet_style))
     story.append(Paragraph("• **SMS Alerting**: Connect APIs to text the administrator on new host connections.", bullet_style))
     story.append(Paragraph("• **Access Control Integration**: Connect router interfaces to restrict hosts directly.", bullet_style))
     
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 8))
     story.append(Paragraph("<u><b>CONCLUSION</b></u>", heading_style))
     story.append(Paragraph(
         "Wi-Fi Guardian demonstrates a lightweight, fault-tolerant network monitor. "
@@ -827,18 +752,16 @@ def generate_report():
         "an intuitive tool for home security administration.",
         body_style
     ))
-    story.append(PageBreak())
-
-    # ------------------ PAGE 21: REFERENCES ------------------
-    story.append(Paragraph("<u><b>REFERENCES</b></u>", heading_style))
     
+    story.append(Spacer(1, 10))
+    story.append(Paragraph("<u><b>REFERENCES</b></u>", heading_style))
     for i, ref in enumerate(references, 1):
         story.append(Paragraph(f"{i}. {ref}", bullet_style))
         
     doc.build(story, canvasmaker=NumberedCanvas)
     print("Success: Generated wifi_guardian_college_report.pdf")
 
-# Global Table Values & References
+# Global Table & Configuration Data
 tech_data = [
     ['Component', 'Technology'],
     ['Programming Language', 'Python 3.x'],
@@ -850,6 +773,15 @@ tech_data = [
     ['Frontend Markup', 'HTML5, CSS3 (Glassmorphism), Vanilla JavaScript'],
     ['Version Control', 'Git & GitHub'],
     ['Development Environment', 'VS Code'],
+]
+
+req_data = [
+    ['Parameter', 'Minimum Requirement', 'Recommended Specification'],
+    ['Processor', 'Dual-core 2.0 GHz CPU', 'Intel i5 or AMD Ryzen 5 CPU'],
+    ['RAM Capacity', '2 GB RAM', '4 GB or above'],
+    ['Storage', '50 MB free space', '100 MB free space (for DB growth)'],
+    ['OS Platform', 'Windows 10 / Linux', 'Windows 10/11 or Ubuntu 20.04+'],
+    ['Python Env', 'Python 3.10', 'Python 3.12 or above'],
 ]
 
 res_data = [
