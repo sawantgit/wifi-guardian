@@ -89,7 +89,7 @@ class NumberedCanvas(canvas.Canvas):
         
         self.setFont("Helvetica", 8.5)
         self.setFillColor(colors.HexColor('#64748b'))
-        self.drawString(54, 34, "Academy of Skill Development — Vellore Institute of Technology, Chennai")
+        self.drawString(54, 34, "Academy of Skill Development")
         
         page_text = f"Page {self._pageNumber}"
         self.drawRightString(558, 34, page_text)
