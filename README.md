@@ -65,7 +65,7 @@ http://127.0.0.1:5000/
 
 ## How It Works
 1. When you open the dashboard or click **Refresh Scan**, the app detects your local IP and subnet range (e.g. `192.168.1.0/24`).
-2. The scanner sends out packets to discover hosts.
+2. The scanner sends out packets to discover hosts (`scanner.py`).
 3. The live IPs and MAC addresses are matched against the local SQLite database (`database.db`).
 4. If any MAC address is not registered in the database, the dashboard displays an **Intruder Warning**.
 5. You can type a label (e.g., "My Phone") and click **Trust Device** to authorize the device.
